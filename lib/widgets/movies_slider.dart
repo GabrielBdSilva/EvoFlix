@@ -3,60 +3,51 @@ import 'package:evoflix/models/movieModel.dart';
 import 'package:evoflix/screens/details.dart';
 import 'package:flutter/material.dart';
 
-class MoviesSlider extends StatelessWidget{
-    const MoviesSlider({
-      super.key, required this.movies,
-    });
+class MoviesSlider extends StatelessWidget {
+  const MoviesSlider({
+    super.key, 
+    required this.movies,
+  });
 
-    //final AsyncSnapshot snapshot;
+  final List<MovieModel> movies;
 
-    final List<MovieModel> movies;
-
-    @override
-    Widget build(BuildContext context){
-      return SizedBox(
-          height: 200,
-          width: double.infinity,
-          child:ListView.builder( 
-          scrollDirection : Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          itemCount: movies.length,
-
-          //do jeito q ta acima ele pega todos 
-          itemBuilder: (context,index){
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: (){
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Details(
-                      movieModel: movies[index],
-                    ),
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, //  colunas
+          //crossAxisSpacing: 0.0, // Espaço entre os  filmeshorizontal
+          mainAxisSpacing: 60.0, // Espaço ente os filmes vertical
+        ),
+        itemCount: movies.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Details(
+                    movieModel: movies[index],
                   ),
-                );
-              },
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(7),
-                  child: SizedBox(
-                    height: 200,
-                    width: 150,
-                    child: Image.network(
-                      filterQuality: FilterQuality.high,
-                      fit: BoxFit.cover,
-                      '${Constants.imagePath}${movies[index].posterPath}',
-                    ),
                 ),
-                            ),
-              )
-            );
-          }
-          
-          )
-        );
-  
-    }
+              );
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(7),
+              child: SizedBox(
+                height: 500,
+                width: double.infinity,
+                child: Image.network(
+                  filterQuality: FilterQuality.high,
+                  fit: BoxFit.contain,
+                  '${Constants.imagePath}${movies[index].posterPath}',
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
-
-
