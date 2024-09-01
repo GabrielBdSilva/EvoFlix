@@ -1,5 +1,6 @@
 import 'package:evoflix/api/api.dart';
 import 'package:evoflix/models/movieModel.dart';
+import 'package:evoflix/screens/search.dart';
 import 'package:evoflix/widgets/movies_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -12,8 +13,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<MovieModel>> popularMovies;
-  List<MovieModel> filteredMovies = [];
-  String searchQuery = '';
+  //List<MovieModel> filteredMovies = [];
+  //String searchQuery = '';
 
   @override
   void initState() {
@@ -21,16 +22,16 @@ class _HomeScreenState extends State<HomeScreen> {
     popularMovies = Api().getPopularMovies();
   }
 
-  void _filterMovies(String query, List<MovieModel>? movies) {
-    if (movies != null) {
-      setState(() {
-        searchQuery = query;
-        filteredMovies = movies.where((movie) {
-          return movie.title.toLowerCase().contains(query.toLowerCase());
-        }).toList();
-      });
-    }
-  }
+  // void _filterMovies(String query, List<MovieModel>? movies) {
+  //   if (movies != null) {
+  //     setState(() {
+  //       searchQuery = query;
+  //       filteredMovies = movies.where((movie) {
+  //         return movie.title.toLowerCase().contains(query.toLowerCase());
+  //       }).toList();
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +40,21 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: TextField(
-          onChanged: (query) async {
-            final movies = await popularMovies;
-            _filterMovies(query, movies);
+          onSubmitted: (query) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Search(query: query),
+              ),
+            );
           },
+          // onChanged: (query) async {
+          //   final movies = await popularMovies;
+          //   _filterMovies(query, movies);
+          // },
+
           decoration: InputDecoration(
-            hintText: 'Digite o nome do filme',
+            hintText: 'Pesquisar Filme',
             hintStyle: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
           ),
           style: TextStyle(color: Colors.white),
@@ -66,17 +76,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 } else if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.hasData) {
-                  final moviesToShow = searchQuery.isEmpty ? snapshot.data! : filteredMovies;
+                  //final moviesToShow = searchQuery.isEmpty ? snapshot.data! : filteredMovies;
 
-                  moviesToShow.sort((a, b) {
-                    final yearComparison = a.releasesDate.compareTo(b.releasesDate);
-                    if (yearComparison != 0) {
-                      return yearComparison;
-                    }
-                    return a.title.compareTo(b.title);
-                  });
+                  // moviesToShow.sort((a, b) {
+                  //   final yearComparison = a.releasesDate.compareTo(b.releasesDate);
+                  //   if (yearComparison != 0) {
+                  //     return yearComparison;
+                  //   }
+                  //  return a.title.compareTo(b.title);
+                 
+                  return MoviesSlider(movies: snapshot.data!);
 
-                  return MoviesSlider(movies: moviesToShow);
+                 // });
+
+                 // return MoviesSlider(movies: moviesToShow);
                 } else {
                   return const Center(child: CircularProgressIndicator());
                 }
