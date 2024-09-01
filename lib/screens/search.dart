@@ -30,6 +30,15 @@ class _SearchResultsScreenState extends State<Search> {
       return movie.posterPath != null && movie.posterPath.isNotEmpty && movie.posterPath != "null";
     }).toList();
 
+
+    filteredMovies.sort((a, b) {
+      final yearComparison = (b.releasesDate ?? '').compareTo(a.releasesDate ?? '');
+      if (yearComparison != 0) {
+        return yearComparison;
+      }
+      return (b.title).compareTo(a.title);
+    });
+
     return filteredMovies;
   }
 
@@ -44,8 +53,7 @@ class _SearchResultsScreenState extends State<Search> {
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text('Erro: ${snapshot.error}'));
-          } else if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData) {
+          } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
             if (snapshot.data!.isEmpty) {
               return Center(child: Text('Nenhum filme encontrado.'));
             }
